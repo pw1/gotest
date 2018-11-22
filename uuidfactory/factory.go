@@ -1,4 +1,4 @@
-package mock
+package uuidfactory
 
 import (
 	"fmt"
@@ -6,17 +6,17 @@ import (
 	"github.com/google/uuid"
 )
 
-// UUIDFactory is a factory that creates predictable UUIDs. This can be used in testing to create
+// Factory is a factory that creates predictable UUIDs. This can be used in testing to create
 // predictable UUIDs, instead of the random ones produced by uuid.New().
-type UUIDFactory struct {
+type Factory struct {
 	uuids   []uuid.UUID
 	nrCalls int
 }
 
-// NewUUIDFactory creates a new UUIDFactory that will generate the specified UUIDs. If any of the
+// NewFactory creates a new Factory that will generate the specified UUIDs. If any of the
 // specified UUIDs is invalid, then this function panics.
-func NewUUIDFactory(uuids []string) *UUIDFactory {
-	u := &UUIDFactory{}
+func NewFactory(uuids []string) *Factory {
+	u := &Factory{}
 	for _, uuidStr := range uuids {
 		newUUID := uuid.MustParse(uuidStr)
 		u.uuids = append(u.uuids, newUUID)
@@ -24,11 +24,11 @@ func NewUUIDFactory(uuids []string) *UUIDFactory {
 	return u
 }
 
-// New creates a new UUID according to the UUIDs passed to the NewUUIDFactory function. If all
+// New creates a new UUID according to the UUIDs passed to the NewFactory function. If all
 // expected UUIDs have already been created, then New() panics.
-func (u *UUIDFactory) New() uuid.UUID {
+func (u *Factory) New() uuid.UUID {
 	if u.nrCalls >= len(u.uuids) {
-		panic(fmt.Sprintf("Unexpected call to UUIDFactory.New(). Already had %d calls.", u.nrCalls))
+		panic(fmt.Sprintf("Unexpected call to Factory.New(). Already had %d calls.", u.nrCalls))
 	}
 	newUUID := u.uuids[u.nrCalls]
 	u.nrCalls++
@@ -36,6 +36,6 @@ func (u *UUIDFactory) New() uuid.UUID {
 }
 
 // AllCreated returns true when all the specifiec UUIDs have been created. Returns false otherwise.
-func (u *UUIDFactory) AllCreated() bool {
+func (u *Factory) AllCreated() bool {
 	return len(u.uuids) == u.nrCalls
 }
