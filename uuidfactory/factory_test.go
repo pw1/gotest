@@ -17,6 +17,15 @@ type FactorySuite struct {
 	suite.Suite
 }
 
+// Tests that NewFactory panics when it receives an invalid UUID.
+func (t *FactorySuite) TestNewFactoryPanics() {
+	uuids := []string{
+		"ce8631ce-3b9d-4ac9-a9fa-d536d2e11a92",
+		"INVALID_UUID",
+	}
+	t.Panics(func() { NewFactory(uuids) })
+}
+
 func (t *FactorySuite) TestNew() {
 	f := NewFactory([]string{
 		"ce8631ce-3b9d-4ac9-a9fa-d536d2e11a92",
@@ -28,13 +37,54 @@ func (t *FactorySuite) TestNew() {
 	t.Equal(uuid.MustParse("367dfdd2-bccb-41db-8364-cc8dd10e9f2a"), f.New())
 }
 
-// Tests that NewFactory panics when it receives an invalid UUID.
-func (t *FactorySuite) TestNewFactoryPanics() {
-	uuids := []string{
+func (t *FactorySuite) TestNewWithError() {
+	strings := []string{
 		"ce8631ce-3b9d-4ac9-a9fa-d536d2e11a92",
-		"INVALID_UUID",
+		"ERROR",
+		"367dfdd2-bccb-41db-8364-cc8dd10e9f2a",
 	}
-	t.Panics(func() { NewFactory(uuids) })
+	f := NewFactory(strings)
+	for _, str := range strings {
+		if str == "ERROR" {
+			t.Panics(func() { f.New() })
+		} else {
+			t.Equal(uuid.MustParse(str), f.New())
+		}
+	}
+}
+
+func (t *FactorySuite) TestNewRandom() {
+	strings := []string{
+		"ce8631ce-3b9d-4ac9-a9fa-d536d2e11a92",
+		"06ef35bc-b8ae-4eff-ab81-2b2abd109fb5",
+		"367dfdd2-bccb-41db-8364-cc8dd10e9f2a",
+	}
+	f := NewFactory(strings)
+	for _, str := range strings {
+		expectedUUID := uuid.MustParse(str)
+		actualUUID, actualErr := f.NewRandom()
+		t.Equal(expectedUUID, actualUUID)
+		t.Nil(actualErr)
+	}
+}
+
+func (t *FactorySuite) TestNewRandomWithError() {
+	strings := []string{
+		"ce8631ce-3b9d-4ac9-a9fa-d536d2e11a92",
+		"ERROR",
+		"367dfdd2-bccb-41db-8364-cc8dd10e9f2a",
+	}
+	f := NewFactory(strings)
+	for _, str := range strings {
+		actualUUID, actualErr := f.NewRandom()
+		if str == "ERROR" {
+			t.Equal(uuid.Nil, actualUUID)
+			t.NotNil(actualErr)
+		} else {
+			t.Equal(uuid.MustParse(str), actualUUID)
+			t.Nil(actualErr)
+		}
+	}
 }
 
 // Check that New() panics when it is called too many times.
@@ -46,7 +96,7 @@ func (t *FactorySuite) TestNewPanic() {
 	t.Panics(func() { f.New() })
 }
 
-func (t *FactorySuite) TestAll() {
+func (t *FactorySuite) TestAllCreated() {
 	f := NewFactory([]string{
 		"ce8631ce-3b9d-4ac9-a9fa-d536d2e11a92",
 		"367dfdd2-bccb-41db-8364-cc8dd10e9f2a",
