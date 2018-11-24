@@ -46,7 +46,9 @@ func (u *Factory) New() uuid.UUID {
 // UUIDs have already been created, then NewRandom() panics.
 func (u *Factory) NewRandom() (uuid.UUID, error) {
 	if u.nrCalls >= len(u.uuids) {
-		panic(fmt.Sprintf("Unexpected call to Factory.New(). Already had %d calls.", u.nrCalls))
+		msg := "Unexpected call to one of the Factory.New*() functions."
+		msg += fmt.Sprintf(" I already had %d expected calls.", len(u.uuids))
+		panic(msg)
 	}
 	newUUID := u.uuids[u.nrCalls]
 	u.nrCalls++
