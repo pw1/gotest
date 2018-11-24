@@ -23,11 +23,11 @@ func (t *FactorySuite) TestNewFactoryPanics() {
 		"ce8631ce-3b9d-4ac9-a9fa-d536d2e11a92",
 		"INVALID_UUID",
 	}
-	t.Panics(func() { NewFactory(uuids) })
+	t.Panics(func() { New(uuids) })
 }
 
 func (t *FactorySuite) TestNew() {
-	f := NewFactory([]string{
+	f := New([]string{
 		"ce8631ce-3b9d-4ac9-a9fa-d536d2e11a92",
 		"06ef35bc-b8ae-4eff-ab81-2b2abd109fb5",
 		"367dfdd2-bccb-41db-8364-cc8dd10e9f2a",
@@ -43,7 +43,7 @@ func (t *FactorySuite) TestNewWithError() {
 		"ERROR",
 		"367dfdd2-bccb-41db-8364-cc8dd10e9f2a",
 	}
-	f := NewFactory(strings)
+	f := New(strings)
 	for _, str := range strings {
 		if str == "ERROR" {
 			t.Panics(func() { f.New() })
@@ -59,7 +59,7 @@ func (t *FactorySuite) TestNewRandom() {
 		"06ef35bc-b8ae-4eff-ab81-2b2abd109fb5",
 		"367dfdd2-bccb-41db-8364-cc8dd10e9f2a",
 	}
-	f := NewFactory(strings)
+	f := New(strings)
 	for _, str := range strings {
 		expectedUUID := uuid.MustParse(str)
 		actualUUID, actualErr := f.NewRandom()
@@ -74,7 +74,7 @@ func (t *FactorySuite) TestNewRandomWithError() {
 		"ERROR",
 		"367dfdd2-bccb-41db-8364-cc8dd10e9f2a",
 	}
-	f := NewFactory(strings)
+	f := New(strings)
 	for _, str := range strings {
 		actualUUID, actualErr := f.NewRandom()
 		if str == "ERROR" {
@@ -89,7 +89,7 @@ func (t *FactorySuite) TestNewRandomWithError() {
 
 // Check that New() panics when it is called too many times.
 func (t *FactorySuite) TestNewPanic() {
-	f := NewFactory([]string{
+	f := New([]string{
 		"ce8631ce-3b9d-4ac9-a9fa-d536d2e11a92",
 	})
 	f.New()
@@ -97,7 +97,7 @@ func (t *FactorySuite) TestNewPanic() {
 }
 
 func (t *FactorySuite) TestAllCreated() {
-	f := NewFactory([]string{
+	f := New([]string{
 		"ce8631ce-3b9d-4ac9-a9fa-d536d2e11a92",
 		"367dfdd2-bccb-41db-8364-cc8dd10e9f2a",
 	})

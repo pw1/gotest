@@ -13,11 +13,11 @@ type Factory struct {
 	nrCalls int
 }
 
-// NewFactory creates a new Factory that will generate the specified UUIDs when New() of NewRandom()
+// New creates a new Factory that will generate the specified UUIDs when New() of NewRandom()
 // are called. If a specified UUID is "ERROR", then the corresponding call to New() will panic, or
 // the corresponding call to NewRandom() wil return a nil UUID and an error.
 // If any of the specified UUIDs is not "ERROR" and is invalid, then this function panics.
-func NewFactory(uuids []string) *Factory {
+func New(uuids []string) *Factory {
 	u := &Factory{}
 	for _, uuidStr := range uuids {
 		if uuidStr == "ERROR" {
@@ -30,7 +30,7 @@ func NewFactory(uuids []string) *Factory {
 	return u
 }
 
-// New creates a new UUID according to the UUIDs passed to the NewFactory function. If the
+// New creates a new UUID according to the UUIDs passed to the New (Factory) function. If the
 // corresponding UUID was specified as "ERROR", then New() will panic. If all expected UUIDs have
 // already been created, then New() panics.
 func (u *Factory) New() uuid.UUID {
@@ -41,7 +41,7 @@ func (u *Factory) New() uuid.UUID {
 	return newUUID
 }
 
-// NewRandom creates a new UUID according to the UUIDs passed to the NewFactory function. If the
+// NewRandom creates a new UUID according to the UUIDs passed to the New (Factory) function. If the
 // corresponding UUID was specified as "ERROR", then NewRandom() returns error.  If all expected
 // UUIDs have already been created, then NewRandom() panics.
 func (u *Factory) NewRandom() (uuid.UUID, error) {
