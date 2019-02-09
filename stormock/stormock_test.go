@@ -21,6 +21,7 @@ type StorMockSuite struct {
 // a method is missing or incorrect, then this won't compile.
 func (s *StorMockSuite) TestStorMockAsStorage() {
 	var storage stor.Storage
-	storage = New()
+	storage, err := New(nil)
 	s.NotNil(storage)
+	s.Nil(err)
 }

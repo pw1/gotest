@@ -5,27 +5,39 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
+const (
+	// MockStorageType is storage.Type of StorageMock.
+	MockStorageType stor.Type = "Mock"
+)
+
+func init() {
+	newStorageFunc := func(conf *stor.Conf) (stor.Storage, error) {
+		return New(conf)
+	}
+	stor.RegisterType(MockStorageType, newStorageFunc)
+}
+
 // Mock is a mock object for mocking storage in testing.
 type Mock struct {
 	mock.Mock
 }
 
 // New creates a new storage.Mock
-func New() *Mock {
+func New(conf *stor.Conf) (*Mock, error) {
 	s := &Mock{}
-	return s
+	return s, nil
+}
+
+// Meta returns all entries within a directory.
+func (m *Mock) Meta(path string) (*stor.Meta, error) {
+	args := m.Called(path)
+	return args.Get(0).(*stor.Meta), args.Error(1)
 }
 
 // List returns all entries within a directory.
 func (m *Mock) List(path string) ([]string, []string, error) {
 	args := m.Called(path)
 	return args.Get(0).([]string), args.Get(1).([]string), args.Error(2)
-}
-
-// Exist returns whether a file exists in storage.
-func (m *Mock) Exist(path string) (bool, error) {
-	args := m.Called(path)
-	return args.Bool(0), args.Error(1)
 }
 
 // Load a file and return its content.
