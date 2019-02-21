@@ -12,7 +12,7 @@ func TestFactorySuite(t *testing.T) {
 	suite.Run(t, new(FactorySuite))
 }
 
-// TaskStorageSuite is the test suite for the Factory object.
+// FactorySuite is the test suite for the Factory object.
 type FactorySuite struct {
 	suite.Suite
 }
