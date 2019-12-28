@@ -1,4 +1,4 @@
-package badwriter
+package iomock
 
 import (
 	"errors"
@@ -8,28 +8,28 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-// TestBadWriterSuite is the test function that runs the tests in the BadWriterSuite.
-func TestBadWriterSuite(t *testing.T) {
-	suite.Run(t, new(BadWriterSuite))
+// TestWriterSuite is the test function that runs the tests in the WriterSuite.
+func TestWriterSuite(t *testing.T) {
+	suite.Run(t, new(WriterSuite))
 }
 
-// BadWriterSuite is the test suite for the BadWriter object.
-type BadWriterSuite struct {
+// WriterSuite is the test suite for the Writer object.
+type WriterSuite struct {
 	suite.Suite
 }
 
-// TestImplementsIoWriter verifies that BadWriter implements io.Writer. This won't compile if it
+// TestImplementsIoWriter verifies that Writer implements io.Writer. This won't compile if it
 // doesn't implement it correctly. The test itself doesn't do anything.
-func (s *BadWriterSuite) TestImplementsIoWriter() {
+func (s *WriterSuite) TestImplementsIoWriter() {
 	var writer io.Writer
-	writer = &BadWriter{}
+	writer = &Writer{}
 	s.NotNil(writer)
 }
 
 // TestDefaultErrOnFirstByte verifies that when ErrAfterBytes is not specified explicitely it will
 // return an error on the first byte.
-func (s *BadWriterSuite) TestDefaultErrOnFirstByte() {
-	writer := &BadWriter{}
+func (s *WriterSuite) TestDefaultErrOnFirstByte() {
+	writer := &Writer{}
 	n, err := writer.Write([]byte{0x00})
 	s.Equal(0, n)
 	s.NotNil(err)
@@ -38,8 +38,8 @@ func (s *BadWriterSuite) TestDefaultErrOnFirstByte() {
 
 // TestErrOnSecondByte verifies that one byte can be written, but an error is returned on the second
 // byte.
-func (s *BadWriterSuite) TestErrOnSecondByte() {
-	writer := &BadWriter{ErrAfterBytes: 1}
+func (s *WriterSuite) TestErrOnSecondByte() {
+	writer := &Writer{ErrAfterBytes: 1}
 	n, err := writer.Write([]byte{0x00, 0x01})
 	s.Equal(1, n)
 	s.NotNil(err)
@@ -48,8 +48,8 @@ func (s *BadWriterSuite) TestErrOnSecondByte() {
 
 // TestErrOnSecondWrite verifies that an error is returned the second time Write() is called, not
 // the first time.
-func (s *BadWriterSuite) TestErrOnSecondWrite() {
-	writer := &BadWriter{ErrAfterBytes: 5}
+func (s *WriterSuite) TestErrOnSecondWrite() {
+	writer := &Writer{ErrAfterBytes: 5}
 	n, err := writer.Write([]byte{0x00, 0x01, 0x02})
 	s.Equal(3, n)
 	s.Nil(err)
@@ -61,9 +61,9 @@ func (s *BadWriterSuite) TestErrOnSecondWrite() {
 
 // TestWithMyError verifies that the user-specified (by setting ErrorValue) error is returned,
 // instead of a new one.
-func (s *BadWriterSuite) TestWithMyError() {
+func (s *WriterSuite) TestWithMyError() {
 	myErr := errors.New("This is my error")
-	writer := &BadWriter{ErrorValue: myErr}
+	writer := &Writer{ErrorValue: myErr}
 	n, err := writer.Write([]byte{0x00, 0x01, 0x02})
 	s.Equal(0, n)
 	s.Same(myErr, err)
@@ -71,8 +71,8 @@ func (s *BadWriterSuite) TestWithMyError() {
 }
 
 // TestErrOnMultipleCalls verifies that consecutive calls to Writes also return errors.
-func (s *BadWriterSuite) TestErrOnMultipleCalls() {
-	writer := &BadWriter{}
+func (s *WriterSuite) TestErrOnMultipleCalls() {
+	writer := &Writer{}
 	n1, err1 := writer.Write([]byte{0x00, 0x01})
 	n2, err2 := writer.Write([]byte{0x02, 0x03})
 	s.Equal(0, n1)

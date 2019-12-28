@@ -1,10 +1,10 @@
-package badwriter
+package iomock
 
 import "errors"
 
-// BadWriter implements the io.Writer interface, but returns an error after ErrAfterBytes bytes are
-// written. BadWriter can return a specified error, or create its own error message.
-type BadWriter struct {
+// Writer implements the io.Writer interface, but returns an error after ErrAfterBytes bytes are
+// written. Writer can return a specified error, or create its own error message.
+type Writer struct {
 	// ErrAfterBytes indicates after how many successfully written bytes it must return an error.
 	ErrAfterBytes int
 
@@ -18,7 +18,7 @@ type BadWriter struct {
 }
 
 // Write simulates writing bytes to the underlying data stream. Implements io.Writer.
-func (w *BadWriter) Write(p []byte) (n int, err error) {
+func (w *Writer) Write(p []byte) (n int, err error) {
 	newBytesWritten := w.bytesWritten + len(p)
 
 	if newBytesWritten <= w.ErrAfterBytes {
